@@ -1,0 +1,34 @@
+# Bundler and Ruby tooling
+/.bundle
+/.ruby-lsp
+/vendor/bundle
+
+# Logs and temporary runtime files
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Local file storage
+/storage/*
+!/storage/.keep
+
+# Generated assets
+/public/assets
+/assets
+
+# Local secrets
+/config/master.key
+/config/credentials/*.key
+/.env*
+!/.env.example
+
+# Node.js and TypeSpec
+/node_modules
+/tsp-output
+
+# Editor and operating-system files
+/.idea
+/.vscode
+*.swp
+.DS_Store

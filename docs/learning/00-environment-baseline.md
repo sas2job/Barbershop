@@ -30,9 +30,11 @@ The generated `Gemfile.lock` resolves Rails to 8.1.3.1.
 | RuboCop | Passed; 23 files, no offenses |
 | Brakeman scanner | Passed; no warnings |
 | Test command | Passed, but contains 0 tests and therefore proves little behavior |
-| PostgreSQL preparation | Not verified because access to the local system socket was not approved |
+| PostgreSQL preparation | Passed manually; created `barbershop_development` and `barbershop_test` |
 
 The first `bin/brakeman` attempt failed inside its forced online latest-version check before scanning the application. Running the scanner directly with `bundle exec brakeman --no-pager` separated the tool-update check from the code scan and completed successfully.
+
+The local PostgreSQL server initially rejected the connection because a role matching the Linux account did not exist. A local role named `user` with `CREATEDB` was created, after which `bin/rails db:prepare` successfully created both application databases.
 
 ## Why record a baseline
 
