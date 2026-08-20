@@ -1,0 +1,29 @@
+<% content_for :title, "Услуги — Барбершоп" %>
+
+<main class="catalog">
+  <header class="catalog__header">
+    <p class="catalog__eyebrow">Онлайн-запись</p>
+    <h1>Выберите услугу</h1>
+    <p>Посмотрите доступные услуги и их длительность. Время визита можно будет выбрать на следующем шаге.</p>
+  </header>
+
+  <% [["women", "Женский зал"], ["men", "Мужской зал"]].each do |category, title| %>
+    <% services = @services_by_category.fetch(category, []) %>
+    <% next if services.empty? %>
+
+    <section class="service-group" aria-labelledby="<%= category %>-services">
+      <h2 id="<%= category %>-services"><%= title %></h2>
+      <div class="service-list">
+        <% services.each do |service| %>
+          <article class="service-card">
+            <div>
+              <h3><%= service.name %></h3>
+              <p><%= service.duration_minutes %> мин.</p>
+            </div>
+            <strong><%= service_price(service) %></strong>
+          </article>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</main>

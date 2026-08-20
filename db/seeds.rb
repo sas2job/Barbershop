@@ -7,3 +7,22 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+services = [
+  [ "Модельная стрижка (мытьё + сушка)", "women", 60, 60_000, 80_000 ],
+  [ "Локоны (гофре, волна) + стайлинг", "women", 90, 140_000, 170_000 ],
+  [ "Плетение кос", "women", 60, 65_000, 65_000 ],
+  [ "Окрашивание в один тон", "women", 120, 240_000, 400_000 ],
+  [ "Модельная стрижка (машинка + ножницы)", "men", 45, 55_000, 55_000 ],
+  [ "Стрижка под машинку", "men", 30, 45_000, 45_000 ],
+  [ "Оформление бороды", "men", 30, 35_000, 35_000 ],
+  [ "Камуфлирование седины", "men", 45, 50_000, 50_000 ]
+]
+
+services.each do |name, category, duration, price_from, price_to|
+  Service.find_or_create_by!(name:) do |service|
+    service.category = category
+    service.duration_minutes = duration
+    service.price_from_cents = price_from
+    service.price_to_cents = price_to
+  end
+end
