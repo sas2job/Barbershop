@@ -1,0 +1,27 @@
+<% content_for :title, "Новый сотрудник" %>
+
+<main>
+  <h1>Новый сотрудник</h1>
+
+  <% if @user.errors.any? %>
+    <div role="alert">
+      <%= @user.errors.full_messages.to_sentence %>
+    </div>
+  <% end %>
+
+  <%= form_with model: @user, url: admin_users_path do |form| %>
+    <%= form.label :email_address, "Email" %>
+    <%= form.email_field :email_address, required: true, autocomplete: "email" %>
+
+    <%= form.label :role, "Роль" %>
+    <%= form.select :role, User.roles.keys.map { |role| [ role.humanize, role ] }, {}, required: true %>
+
+    <%= form.label :password, "Пароль" %>
+    <%= form.password_field :password, required: true, autocomplete: "new-password" %>
+
+    <%= form.label :password_confirmation, "Подтверждение пароля" %>
+    <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
+
+    <%= form.submit "Создать сотрудника" %>
+  <% end %>
+</main>

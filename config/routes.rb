@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   end
   namespace :admin do
     resource :dashboard, only: :show
+    resources :users, only: %i[ new create ]
   end
   root "services#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
