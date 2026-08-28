@@ -14,6 +14,8 @@ class BookingSchedule
   end
 
   def self.capacity_for(starts_at)
-    WorkingHour.find_by!(weekday: starts_at.to_date.wday).capacity
+    working_capacity = WorkingHour.find_by!(weekday: starts_at.to_date.wday).capacity
+    unavailable_barbers = TimeOff.overlapping(starts_at, starts_at + 1.hour).distinct.count(:barber_id)
+    [ working_capacity - unavailable_barbers, 0 ].max
   end
 end

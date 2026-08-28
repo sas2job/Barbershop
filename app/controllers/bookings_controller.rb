@@ -99,11 +99,6 @@ class BookingsController < ApplicationController
   end
 
   def available_slots(exclude_booking: nil)
-    BookingSchedule.slots_for(@date).select do |slot|
-      active_bookings = Booking.active.joins(:booking_slot).where(booking_slots: { starts_at: slot })
-      active_bookings = active_bookings.where.not(id: exclude_booking.id) if exclude_booking
-      capacity = BookingSlot.find_by(starts_at: slot)&.capacity || BookingSchedule.capacity_for(slot)
-      slot.future? && active_bookings.count < capacity
-    end
+    Availability::FindSlots.call(service: @service, date: @date, exclude_booking:)
   end
 end

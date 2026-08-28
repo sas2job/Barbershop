@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_28_170000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_28_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -66,6 +66,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_170000) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "time_offs", force: :cascade do |t|
+    t.bigint "barber_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "ends_at", null: false
+    t.string "reason"
+    t.datetime "starts_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barber_id", "starts_at", "ends_at"], name: "index_time_offs_on_barber_id_and_starts_at_and_ends_at"
+    t.index ["barber_id"], name: "index_time_offs_on_barber_id"
+    t.check_constraint "ends_at > starts_at", name: "time_offs_range_ordered"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
@@ -93,4 +105,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_170000) do
   add_foreign_key "bookings", "services"
   add_foreign_key "bookings", "users", column: "barber_id"
   add_foreign_key "sessions", "users"
+  add_foreign_key "time_offs", "users", column: "barber_id"
 end
