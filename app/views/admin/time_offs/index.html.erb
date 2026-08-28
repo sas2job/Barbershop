@@ -1,0 +1,44 @@
+<% content_for :title, "Отсутствия мастеров" %>
+
+<main class="admin-page">
+  <header class="admin-page__header">
+    <p class="catalog__eyebrow">Управление</p>
+    <h1>Отсутствия мастеров</h1>
+    <%= link_to "Рабочие часы", admin_working_hours_path %>
+  </header>
+
+  <% if @time_off.errors.any? %>
+    <div class="form-errors" role="alert"><%= @time_off.errors.full_messages.to_sentence %></div>
+  <% end %>
+
+  <%= form_with model: @time_off, url: admin_time_offs_path, class: "booking-form" do |form| %>
+    <div>
+      <%= form.label :barber_id, "Мастер" %>
+      <%= form.select :barber_id, options_from_collection_for_select(@barbers, :id, :email_address, @time_off.barber_id), { include_blank: "Выберите мастера" }, required: true %>
+    </div>
+    <div>
+      <%= form.label :starts_at, "Начало" %>
+      <%= form.datetime_local_field :starts_at, required: true %>
+    </div>
+    <div>
+      <%= form.label :ends_at, "Окончание" %>
+      <%= form.datetime_local_field :ends_at, required: true %>
+    </div>
+    <div>
+      <%= form.label :reason, "Причина" %>
+      <%= form.text_field :reason %>
+    </div>
+    <%= form.submit "Добавить отсутствие" %>
+  <% end %>
+
+  <div class="admin-hours">
+    <% @time_offs.each do |time_off| %>
+      <article class="admin-hour">
+        <p><%= time_off.barber.email_address %></p>
+        <p><%= time_off.starts_at.strftime("%d.%m.%Y, %H:%M") %>–<%= time_off.ends_at.strftime("%H:%M") %></p>
+        <p><%= time_off.reason %></p>
+        <%= button_to "Удалить", admin_time_off_path(time_off), method: :delete %>
+      </article>
+    <% end %>
+  </div>
+</main>

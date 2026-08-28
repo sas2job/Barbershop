@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     resources :users, only: %i[ new create ]
     resources :bookings, only: %i[ edit update ]
     resources :working_hours, only: %i[ index update ]
+    resources :time_offs, only: %i[ index create destroy ]
   end
   resources :bookings, only: %i[ new create show ], param: :public_token do
     member do
