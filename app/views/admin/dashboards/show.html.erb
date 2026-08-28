@@ -1,0 +1,29 @@
+<% content_for :title, "Панель администратора" %>
+
+<main class="admin-page">
+  <header class="admin-page__header">
+    <p class="catalog__eyebrow">Управление</p>
+    <h1>Записи</h1>
+  </header>
+
+  <div class="admin-bookings">
+    <% if @bookings.empty? %>
+      <p>Записей пока нет.</p>
+    <% end %>
+
+    <% @bookings.each do |booking| %>
+      <article class="admin-booking">
+        <div>
+          <h2><%= booking.service.name %></h2>
+          <p><%= booking.booking_slot.starts_at.strftime("%d.%m.%Y, %H:%M") %> · <%= booking.client_name %></p>
+          <p>Статус: <%= booking.status %></p>
+        </div>
+        <%= form_with model: booking, url: admin_booking_path(booking), method: :patch do |form| %>
+          <%= form.label :barber_id, "Мастер" %>
+          <%= form.select :barber_id, options_from_collection_for_select(@barbers, :id, :email_address, booking.barber_id), { include_blank: "Не назначен" }, required: false %>
+          <%= form.submit "Сохранить" %>
+        <% end %>
+      </article>
+    <% end %>
+  </div>
+</main>
