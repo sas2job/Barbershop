@@ -1,5 +1,5 @@
 class BookingSlot < ApplicationRecord
-  CAPACITY = 2
+  DEFAULT_CAPACITY = 2
 
   has_many :bookings, dependent: :restrict_with_exception
 
@@ -11,6 +11,6 @@ class BookingSlot < ApplicationRecord
   private
 
   def set_default_capacity
-    self.capacity ||= CAPACITY
+    self.capacity ||= DEFAULT_CAPACITY
   end
 end

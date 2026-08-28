@@ -12,4 +12,8 @@ class BookingSchedule
   def self.open?(starts_at)
     starts_at == starts_at.beginning_of_hour && slots_for(starts_at.to_date).include?(starts_at)
   end
+
+  def self.capacity_for(starts_at)
+    WorkingHour.find_by!(weekday: starts_at.to_date.wday).capacity
+  end
 end

@@ -15,7 +15,9 @@ class Booking < ApplicationRecord
 
   def self.reserve!(service:, starts_at:, client_name:, phone_number:)
     transaction(requires_new: true) do
-      slot = BookingSlot.create_or_find_by!(starts_at: starts_at)
+      slot = BookingSlot.create_or_find_by!(starts_at: starts_at) do |new_slot|
+        new_slot.capacity = BookingSchedule.capacity_for(starts_at)
+      end
 
       slot.with_lock do
         raise SlotUnavailable if slot.bookings.active.count >= slot.capacity

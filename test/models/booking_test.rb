@@ -46,6 +46,27 @@ class BookingTest < ActiveSupport::TestCase
     assert_equal 2, Booking.active.count
   end
 
+  test "uses the working hour capacity for a new slot" do
+    WorkingHour.find_by!(weekday: @starts_at.to_date.wday).update!(capacity: 1)
+
+    booking = Booking.reserve!(
+      service: @service,
+      starts_at: @starts_at,
+      client_name: "Клиент",
+      phone_number: "8-000-000-00-00"
+    )
+
+    assert_equal 1, booking.booking_slot.capacity
+    assert_raises Booking::SlotUnavailable do
+      Booking.reserve!(
+        service: @service,
+        starts_at: @starts_at,
+        client_name: "Клиент",
+        phone_number: "8-000-000-00-00"
+      )
+    end
+  end
+
   test "requires the documented phone format" do
     booking = Booking.new(phone_number: "80000000000")
 
