@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
+  namespace :staff do
+    resource :dashboard, only: :show
+  end
+  namespace :admin do
+    resource :dashboard, only: :show
+  end
   root "services#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
