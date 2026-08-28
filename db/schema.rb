@@ -10,9 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_28_113141) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_28_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "booking_slots", force: :cascade do |t|
+    t.integer "capacity", default: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "starts_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["starts_at"], name: "index_booking_slots_on_starts_at", unique: true
+    t.check_constraint "capacity > 0", name: "booking_slots_capacity_positive"
+  end
+
+  create_table "bookings", force: :cascade do |t|
+    t.bigint "barber_id"
+    t.bigint "booking_slot_id", null: false
+    t.string "client_name", null: false
+    t.datetime "created_at", null: false
+    t.string "phone_number", null: false
+    t.string "public_token", null: false
+    t.bigint "service_id", null: false
+    t.string "status", default: "confirmed", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barber_id"], name: "index_bookings_on_barber_id"
+    t.index ["booking_slot_id", "status"], name: "index_bookings_on_booking_slot_id_and_status"
+    t.index ["booking_slot_id"], name: "index_bookings_on_booking_slot_id"
+    t.index ["public_token"], name: "index_bookings_on_public_token", unique: true
+    t.index ["service_id"], name: "index_bookings_on_service_id"
+    t.check_constraint "status::text = ANY (ARRAY['confirmed'::character varying, 'cancelled'::character varying, 'annulled'::character varying]::text[])", name: "bookings_status_allowed"
+  end
 
   create_table "services", force: :cascade do |t|
     t.boolean "active", default: true, null: false
@@ -46,8 +73,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_113141) do
     t.string "role", default: "barber", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
-    t.check_constraint "role::text = ANY (ARRAY['barber'::character varying, 'admin'::character varying]::text[])", name: "users_role_allowed"
+    t.check_constraint "role::text = ANY (ARRAY['barber'::character varying::text, 'admin'::character varying::text])", name: "users_role_allowed"
   end
 
+  add_foreign_key "bookings", "booking_slots"
+  add_foreign_key "bookings", "services"
+  add_foreign_key "bookings", "users", column: "barber_id"
   add_foreign_key "sessions", "users"
 end

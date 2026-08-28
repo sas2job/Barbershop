@@ -1,0 +1,25 @@
+<% content_for :title, "Ваша запись" %>
+
+<main class="booking-page">
+  <header class="booking-page__header">
+    <p class="catalog__eyebrow">Онлайн-запись</p>
+    <h1>Запись подтверждена</h1>
+    <p>Сохраните эту страницу, чтобы вернуться к записи.</p>
+  </header>
+
+  <dl class="booking-summary">
+    <dt>Услуга</dt>
+    <dd><%= @booking.service.name %></dd>
+    <dt>Дата и время</dt>
+    <dd><%= l(@booking.booking_slot.starts_at, format: :long) %></dd>
+    <dt>Статус</dt>
+    <dd><%= @booking.status == "confirmed" ? "Подтверждена" : @booking.status %></dd>
+  </dl>
+
+  <% if @booking.confirmed? %>
+    <div class="booking-actions">
+      <%= link_to "Перенести запись", reschedule_booking_path(@booking.public_token, date: @booking.booking_slot.starts_at.to_date.iso8601) %>
+      <%= button_to "Отменить запись", cancel_booking_path(@booking.public_token), method: :post, data: { turbo_confirm: "Отменить запись?" } %>
+    </div>
+  <% end %>
+</main>

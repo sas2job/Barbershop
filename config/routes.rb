@@ -7,6 +7,14 @@ Rails.application.routes.draw do
   namespace :admin do
     resource :dashboard, only: :show
     resources :users, only: %i[ new create ]
+    resources :bookings, only: :update
+  end
+  resources :bookings, only: %i[ new create show ], param: :public_token do
+    member do
+      post :cancel
+      get :reschedule
+      post :reschedule
+    end
   end
   root "services#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

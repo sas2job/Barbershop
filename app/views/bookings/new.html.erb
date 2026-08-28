@@ -1,0 +1,48 @@
+<% content_for :title, "Запись на услугу" %>
+
+<main class="booking-page">
+  <header class="booking-page__header">
+    <p class="catalog__eyebrow">Онлайн-запись</p>
+    <h1>Запись на услугу</h1>
+    <p><strong><%= @service.name %></strong> · <%= service_price(@service) %></p>
+  </header>
+
+  <% if @booking.errors.any? %>
+    <div class="form-errors" role="alert"><%= @booking.errors.full_messages.to_sentence %></div>
+  <% end %>
+
+  <%= form_with url: new_booking_path, method: :get, class: "booking-date-form" do %>
+    <%= hidden_field_tag :service_id, @service.id %>
+    <div>
+      <%= label_tag :date, "Дата" %>
+      <%= date_field_tag :date, @date.iso8601, min: Date.current.iso8601, required: true %>
+      <%= submit_tag "Показать время" %>
+    </div>
+  <% end %>
+
+  <%= form_with model: @booking, url: bookings_path, class: "booking-form" do |form| %>
+    <%= hidden_field_tag :service_id, @service.id %>
+    <%= hidden_field_tag :date, @date.iso8601 %>
+
+    <div>
+      <%= label_tag "booking_starts_at", "Время" %>
+      <% if @slots.any? %>
+        <%= select_tag "booking[starts_at]", options_for_select(@slots.map { |slot| [ slot.strftime("%H:%M"), slot.iso8601 ] }, params.dig(:booking, :starts_at)), include_blank: "Выберите время", required: true %>
+      <% else %>
+        <p>На выбранную дату свободных часов нет.</p>
+      <% end %>
+    </div>
+
+    <div>
+      <%= form.label :client_name, "Ваше имя" %>
+      <%= form.text_field :client_name, required: true, autocomplete: "name" %>
+    </div>
+
+    <div>
+      <%= form.label :phone_number, "Телефон" %>
+      <%= form.telephone_field :phone_number, required: true, placeholder: "8-000-000-00-00", pattern: "8-[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}", autocomplete: "tel" %>
+    </div>
+
+    <%= form.submit "Подтвердить запись", disabled: @slots.empty? %>
+  <% end %>
+</main>
