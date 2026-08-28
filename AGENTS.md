@@ -16,6 +16,7 @@
 - Update specifications, ADRs, and learning notes when behavior or an architectural decision changes.
 - When the user has explicitly requested an implementation task, proceed with safe in-scope changes immediately; do not ask for confirmation at each routine step.
 - When the user explicitly authorizes a specific in-scope action, treat that authorization as sufficient and perform it without asking again, including staging related files and creating a Git commit when requested.
+- For routine confirmations within an explicitly authorized task, answer affirmatively and continue execution immediately, while still reporting blockers accurately and preserving safety constraints.
 - Do not report completion without evidence from tests, checks, or a reproducible manual verification.
 
 ## Product rules
