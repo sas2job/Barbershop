@@ -8,13 +8,14 @@ module Admin
 
     def create
       attributes = user_params
-      unless User.roles.key?(attributes[:role])
-        @user = User.new(attributes.except(:role))
+      role = params.dig(:user, :role)
+      unless User.roles.key?(role)
+        @user = User.new(attributes)
         @user.errors.add(:role, "is invalid")
         return render :new, status: :unprocessable_content
       end
 
-      @user = User.new(attributes)
+      @user = User.new(attributes.merge(role: role))
       if @user.save
         redirect_to admin_dashboard_path, notice: "Staff user created."
       else
@@ -31,7 +32,7 @@ module Admin
     end
 
     def user_params
-      params.require(:user).permit(:email_address, :password, :password_confirmation, :role)
+      params.require(:user).permit(:email_address, :password, :password_confirmation)
     end
   end
 end
