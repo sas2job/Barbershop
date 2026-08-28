@@ -34,6 +34,28 @@ class Booking < ApplicationRecord
     end
   end
 
+  def self.update_details!(booking:, service:, starts_at:, client_name:, phone_number:, barber:)
+    transaction(requires_new: true) do
+      booking.lock!
+      slot = BookingSlot.create_or_find_by!(starts_at: starts_at) do |new_slot|
+        new_slot.capacity = BookingSchedule.capacity_for(starts_at)
+      end
+
+      slot.with_lock do
+        active_bookings = slot.bookings.active.where.not(id: booking.id)
+        raise SlotUnavailable if active_bookings.count >= slot.capacity
+
+        booking.update!(
+          service: service,
+          booking_slot: slot,
+          client_name: client_name,
+          phone_number: phone_number,
+          barber: barber
+        )
+      end
+    end
+  end
+
   before_validation :generate_public_token, on: :create
 
   private

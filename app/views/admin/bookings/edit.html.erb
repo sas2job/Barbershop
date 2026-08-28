@@ -1,0 +1,45 @@
+<% content_for :title, "Редактирование записи" %>
+
+<main class="admin-page">
+  <header class="admin-page__header">
+    <p class="catalog__eyebrow">Управление</p>
+    <h1>Редактирование записи</h1>
+  </header>
+
+  <% if @booking.errors.any? %>
+    <div class="form-errors" role="alert"><%= @booking.errors.full_messages.to_sentence %></div>
+  <% end %>
+
+  <%= form_with url: edit_admin_booking_path(@booking), method: :get, class: "booking-date-form" do %>
+    <div>
+      <%= label_tag :date, "Дата" %>
+      <%= date_field_tag :date, @date.iso8601, required: true %>
+      <%= submit_tag "Показать часы" %>
+    </div>
+  <% end %>
+
+  <%= form_with model: @booking, url: admin_booking_path(@booking), method: :patch, class: "booking-form" do |form| %>
+    <%= hidden_field_tag :date, @date.iso8601 %>
+    <div>
+      <%= form.label :service_id, "Услуга" %>
+      <%= form.select :service_id, options_from_collection_for_select(@services, :id, :name, @booking.service_id), {}, required: true %>
+    </div>
+    <div>
+      <%= label_tag "booking_starts_at", "Время" %>
+      <%= select_tag "booking[starts_at]", options_for_select(@slots.map { |slot| [ slot.strftime("%H:%M"), slot.iso8601 ] }, @booking.booking_slot.starts_at.iso8601), required: true %>
+    </div>
+    <div>
+      <%= form.label :client_name, "Имя клиента" %>
+      <%= form.text_field :client_name, required: true %>
+    </div>
+    <div>
+      <%= form.label :phone_number, "Телефон" %>
+      <%= form.telephone_field :phone_number, required: true %>
+    </div>
+    <div>
+      <%= form.label :barber_id, "Мастер" %>
+      <%= form.select :barber_id, options_from_collection_for_select(@barbers, :id, :email_address, @booking.barber_id), { include_blank: "Не назначен" }, required: false %>
+    </div>
+    <%= form.submit "Сохранить изменения" %>
+  <% end %>
+</main>

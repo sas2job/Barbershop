@@ -18,6 +18,7 @@
           <h2><%= booking.service.name %></h2>
           <p><%= booking.booking_slot.starts_at.strftime("%d.%m.%Y, %H:%M") %> · <%= booking.client_name %></p>
           <p>Статус: <%= booking.status %></p>
+          <%= link_to "Редактировать", edit_admin_booking_path(booking) %>
         </div>
         <%= form_with model: booking, url: admin_booking_path(booking), method: :patch do |form| %>
           <%= form.label :barber_id, "Мастер" %>
