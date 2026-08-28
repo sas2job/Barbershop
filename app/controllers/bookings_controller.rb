@@ -21,7 +21,7 @@ class BookingsController < ApplicationController
       return render :new, status: :unprocessable_content
     end
 
-    booking = Booking.reserve!(service: @service, starts_at: starts_at, **booking_params.to_h.symbolize_keys)
+      booking = Appointments::Book.call(service: @service, starts_at:, **booking_params.to_h.symbolize_keys)
     redirect_to booking_path(booking.public_token), notice: "Запись подтверждена."
   rescue Booking::SlotUnavailable
     @booking.errors.add(:base, "Это время уже занято")

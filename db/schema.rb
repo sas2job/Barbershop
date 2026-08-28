@@ -10,9 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_28_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_28_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "barber_working_hours", force: :cascade do |t|
+    t.bigint "barber_id", null: false
+    t.time "closes_at", null: false
+    t.datetime "created_at", null: false
+    t.time "opens_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "weekday", null: false
+    t.index ["barber_id", "weekday"], name: "index_barber_working_hours_on_barber_id_and_weekday", unique: true
+    t.index ["barber_id"], name: "index_barber_working_hours_on_barber_id"
+    t.check_constraint "closes_at > opens_at", name: "barber_working_hours_range_ordered"
+    t.check_constraint "weekday >= 0 AND weekday <= 6", name: "barber_working_hours_weekday_allowed"
+  end
 
   create_table "booking_slots", force: :cascade do |t|
     t.integer "capacity", default: 2, null: false
@@ -101,6 +114,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_180000) do
     t.check_constraint "weekday >= 0 AND weekday <= 6", name: "working_hours_weekday_allowed"
   end
 
+  add_foreign_key "barber_working_hours", "users", column: "barber_id"
   add_foreign_key "bookings", "booking_slots"
   add_foreign_key "bookings", "services"
   add_foreign_key "bookings", "users", column: "barber_id"

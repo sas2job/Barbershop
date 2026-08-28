@@ -1,0 +1,44 @@
+<% content_for :title, "Графики мастеров" %>
+
+<main class="admin-page">
+  <header class="admin-page__header">
+    <p class="catalog__eyebrow">Управление</p>
+    <h1>Графики мастеров</h1>
+    <%= link_to "Рабочие часы салона", admin_working_hours_path %>
+  </header>
+
+  <% if @barber_working_hour.errors.any? %>
+    <div class="form-errors" role="alert"><%= @barber_working_hour.errors.full_messages.to_sentence %></div>
+  <% end %>
+
+  <%= form_with model: @barber_working_hour, url: admin_barber_working_hours_path, class: "booking-form" do |form| %>
+    <div>
+      <%= form.label :barber_id, "Мастер" %>
+      <%= form.select :barber_id, options_from_collection_for_select(@barbers, :id, :email_address, @barber_working_hour.barber_id), include_blank: true %>
+    </div>
+    <div>
+      <%= form.label :weekday, "День недели" %>
+      <%= form.select :weekday, Date::DAYNAMES.each_with_index.map { |name, day| [I18n.t("date.day_names")[day], day] }, include_blank: true %>
+    </div>
+    <div>
+      <%= form.label :opens_at, "Начало" %>
+      <%= form.time_field :opens_at, value: @barber_working_hour.opens_at&.strftime("%H:%M") %>
+    </div>
+    <div>
+      <%= form.label :closes_at, "Окончание" %>
+      <%= form.time_field :closes_at, value: @barber_working_hour.closes_at&.strftime("%H:%M") %>
+    </div>
+    <%= form.submit "Сохранить график" %>
+  <% end %>
+
+  <div class="admin-hours">
+    <% @barber_working_hours.each do |working_hour| %>
+      <article class="admin-hour">
+        <h2><%= working_hour.barber.email_address %></h2>
+        <p><%= I18n.t("date.day_names")[working_hour.weekday] %>:
+          <%= working_hour.opens_at.strftime("%H:%M") %>–<%= working_hour.closes_at.strftime("%H:%M") %></p>
+        <%= button_to "Удалить", admin_barber_working_hour_path(working_hour), method: :delete %>
+      </article>
+    <% end %>
+  </div>
+</main>

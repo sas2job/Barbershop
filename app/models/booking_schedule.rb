@@ -14,8 +14,19 @@ class BookingSchedule
   end
 
   def self.capacity_for(starts_at)
-    working_capacity = WorkingHour.find_by!(weekday: starts_at.to_date.wday).capacity
-    unavailable_barbers = TimeOff.overlapping(starts_at, starts_at + 1.hour).distinct.count(:barber_id)
-    [ working_capacity - unavailable_barbers, 0 ].max
+    weekday_working_hours = BarberWorkingHour.for_weekday(starts_at.to_date.wday)
+    scheduled_barber_ids = weekday_working_hours.select do |working_hour|
+      working_hour.covers?(starts_at, starts_at + 1.hour)
+    end.map(&:barber_id).uniq
+    if scheduled_barber_ids.empty? && weekday_working_hours.none?
+      working_capacity = WorkingHour.find_by!(weekday: starts_at.to_date.wday).capacity
+      unavailable_barbers = TimeOff.overlapping(starts_at, starts_at + 1.hour).distinct.count(:barber_id)
+      return [ working_capacity - unavailable_barbers, 0 ].max
+    end
+    unavailable_barber_ids = TimeOff.overlapping(starts_at, starts_at + 1.hour)
+      .where(barber_id: scheduled_barber_ids)
+      .distinct
+      .pluck(:barber_id)
+    [ scheduled_barber_ids.length - unavailable_barber_ids.length, 0 ].max
   end
 end
