@@ -13,18 +13,18 @@ services = [
   [ "Плетение кос", "women", 60, 65_000, 65_000 ],
   [ "Окрашивание в один тон", "women", 120, 240_000, 400_000 ],
   [ "Модельная стрижка (машинка + ножницы)", "men", 45, 55_000, 55_000 ],
-  [ "Стрижка под машинку", "men", 30, 45_000, 45_000 ],
+  [ "Модельная стрижка с элементами креатива (машинка + ножницы)", "men", 45, 60_000, 60_000 ],
+  [ "Камуфлирование седины «Estel Alpha Homme»", "men", 30, 60_000, 60_000 ],
+  [ "Работа с применением шейвера", "men", 30, 5_000, 5_000 ],
+  [ "Стрижка под одну насадку", "men", 30, 35_000, 35_000 ],
+  [ "Стрижка под машинку (2 и более насадки)", "men", 30, 45_000, 45_000 ],
   [ "Оформление бороды", "men", 30, 35_000, 35_000 ],
-  [ "Камуфлирование седины", "men", 45, 50_000, 50_000 ]
+  [ "Стрижка наголо", "men", 15, 30_000, 30_000 ]
 ]
 
 services.each do |name, category, duration, price_from, price_to|
-  Service.find_or_create_by!(name:) do |service|
-    service.category = category
-    service.duration_minutes = duration
-    service.price_from_cents = price_from
-    service.price_to_cents = price_to
-  end
+  service = Service.find_or_initialize_by(name:)
+  service.update!(category:, duration_minutes: duration, price_from_cents: price_from, price_to_cents: price_to)
 end
 
 working_hours = {
