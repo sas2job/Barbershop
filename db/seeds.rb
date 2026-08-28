@@ -26,3 +26,18 @@ services.each do |name, category, duration, price_from, price_to|
     service.price_to_cents = price_to
   end
 end
+
+working_hours = {
+  0 => [ 9, 19 ],
+  1 => [ 8, 20 ],
+  2 => [ 8, 20 ],
+  3 => [ 8, 20 ],
+  4 => [ 8, 20 ],
+  5 => [ 8, 20 ],
+  6 => [ 9, 20 ]
+}
+
+working_hours.each do |weekday, (opens_at, closes_at)|
+  working_hour = WorkingHour.find_or_initialize_by(weekday: weekday)
+  working_hour.update!(opens_at: "#{opens_at}:00", closes_at: "#{closes_at}:00", capacity: 2)
+end

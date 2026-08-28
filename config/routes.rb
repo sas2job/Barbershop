@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resource :dashboard, only: :show
     resources :users, only: %i[ new create ]
     resources :bookings, only: :update
+    resources :working_hours, only: %i[ index update ]
   end
   resources :bookings, only: %i[ new create show ], param: :public_token do
     member do

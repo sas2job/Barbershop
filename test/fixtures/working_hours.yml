@@ -1,0 +1,41 @@
+sunday:
+  weekday: 0
+  opens_at: "09:00"
+  closes_at: "19:00"
+  capacity: 2
+
+monday:
+  weekday: 1
+  opens_at: "08:00"
+  closes_at: "20:00"
+  capacity: 2
+
+tuesday:
+  weekday: 2
+  opens_at: "08:00"
+  closes_at: "20:00"
+  capacity: 2
+
+wednesday:
+  weekday: 3
+  opens_at: "08:00"
+  closes_at: "20:00"
+  capacity: 2
+
+thursday:
+  weekday: 4
+  opens_at: "08:00"
+  closes_at: "20:00"
+  capacity: 2
+
+friday:
+  weekday: 5
+  opens_at: "08:00"
+  closes_at: "20:00"
+  capacity: 2
+
+saturday:
+  weekday: 6
+  opens_at: "09:00"
+  closes_at: "20:00"
+  capacity: 2

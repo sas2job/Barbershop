@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_28_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_28_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -38,7 +38,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_150000) do
     t.index ["booking_slot_id"], name: "index_bookings_on_booking_slot_id"
     t.index ["public_token"], name: "index_bookings_on_public_token", unique: true
     t.index ["service_id"], name: "index_bookings_on_service_id"
-    t.check_constraint "status::text = ANY (ARRAY['confirmed'::character varying, 'cancelled'::character varying, 'annulled'::character varying]::text[])", name: "bookings_status_allowed"
+    t.check_constraint "status::text = ANY (ARRAY['confirmed'::character varying::text, 'cancelled'::character varying::text, 'annulled'::character varying::text])", name: "bookings_status_allowed"
   end
 
   create_table "services", force: :cascade do |t|
@@ -74,6 +74,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_150000) do
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.check_constraint "role::text = ANY (ARRAY['barber'::character varying::text, 'admin'::character varying::text])", name: "users_role_allowed"
+  end
+
+  create_table "working_hours", force: :cascade do |t|
+    t.integer "capacity", default: 2, null: false
+    t.time "closes_at", null: false
+    t.datetime "created_at", null: false
+    t.time "opens_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "weekday", null: false
+    t.index ["weekday"], name: "index_working_hours_on_weekday", unique: true
+    t.check_constraint "capacity > 0", name: "working_hours_capacity_positive"
+    t.check_constraint "closes_at > opens_at", name: "working_hours_range_ordered"
+    t.check_constraint "weekday >= 0 AND weekday <= 6", name: "working_hours_weekday_allowed"
   end
 
   add_foreign_key "bookings", "booking_slots"

@@ -1,16 +1,8 @@
 class BookingSchedule
-  OPENING_HOURS = {
-    1 => [ 8, 20 ],
-    2 => [ 8, 20 ],
-    3 => [ 8, 20 ],
-    4 => [ 8, 20 ],
-    5 => [ 8, 20 ],
-    6 => [ 9, 20 ],
-    0 => [ 9, 19 ]
-  }.freeze
-
   def self.slots_for(date)
-    opening_hour, closing_hour = OPENING_HOURS.fetch(date.wday)
+    working_hour = WorkingHour.find_by!(weekday: date.wday)
+    opening_hour = working_hour.opens_at.hour
+    closing_hour = working_hour.closes_at.hour
 
     (opening_hour...closing_hour).map do |hour|
       Time.zone.local(date.year, date.month, date.day, hour)

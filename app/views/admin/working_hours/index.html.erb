@@ -1,0 +1,23 @@
+<% content_for :title, "Рабочие часы" %>
+
+<main class="admin-page">
+  <header class="admin-page__header">
+    <p class="catalog__eyebrow">Управление</p>
+    <h1>Рабочие часы</h1>
+  </header>
+
+  <div class="admin-hours">
+    <% @working_hours.each do |working_hour| %>
+      <%= form_with model: working_hour, url: admin_working_hour_path(working_hour), method: :patch, class: "admin-hour" do |form| %>
+        <h2><%= t("date.day_names")[working_hour.weekday] %></h2>
+        <%= form.label :opens_at, "Открытие" %>
+        <%= form.time_field :opens_at, value: working_hour.opens_at&.strftime("%H:%M"), required: true %>
+        <%= form.label :closes_at, "Закрытие" %>
+        <%= form.time_field :closes_at, value: working_hour.closes_at&.strftime("%H:%M"), required: true %>
+        <%= form.label :capacity, "Мест" %>
+        <%= form.number_field :capacity, min: 1, required: true %>
+        <%= form.submit "Сохранить" %>
+      <% end %>
+    <% end %>
+  </div>
+</main>
