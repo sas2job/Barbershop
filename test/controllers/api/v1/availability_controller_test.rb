@@ -29,6 +29,7 @@ class Api::V1::AvailabilityControllerTest < ActionDispatch::IntegrationTest
     get api_v1_availability_path, params: { service_id: @service.id, date: @date.iso8601 }
 
     assert_response :not_found
+    assert_equal "application/json", response.media_type
   end
 
   test "rejects an invalid date" do

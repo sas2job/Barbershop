@@ -121,4 +121,24 @@ class Api::V1::BookingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_content
     assert booking.reload.confirmed?
   end
+
+  test "does not expose a booking for an unknown token" do
+    get api_v1_booking_path("unknown-token"), as: :json
+
+    assert_response :not_found
+    assert_equal "Ресурс не найден", JSON.parse(response.body).fetch("error")
+  end
+
+  test "does not reschedule a cancelled booking" do
+    booking = Booking.reserve!(service: @service, starts_at: @starts_at, client_name: "Клиент", phone_number: "8-000-000-00-00")
+    booking.update!(status: :cancelled)
+    replacement_time = BookingSchedule.slots_for(@date).last
+
+    assert_no_difference("Booking.count") do
+      patch api_v1_booking_path(booking.public_token), params: { booking: { starts_at: replacement_time.iso8601 } }, as: :json
+    end
+
+    assert_response :unprocessable_content
+    assert booking.reload.cancelled?
+  end
 end

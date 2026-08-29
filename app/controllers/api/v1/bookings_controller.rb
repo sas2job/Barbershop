@@ -1,7 +1,6 @@
 module Api
   module V1
-    class BookingsController < ApplicationController
-      allow_unauthenticated_access
+    class BookingsController < BaseController
       before_action :load_booking, only: %i[ show destroy update ]
 
       def show

@@ -1,8 +1,6 @@
 module Api
   module V1
-    class AvailabilityController < ApplicationController
-      allow_unauthenticated_access
-
+    class AvailabilityController < BaseController
       def show
         service = Service.available_for_booking.find(params[:service_id])
         date = Date.iso8601(params[:date])
