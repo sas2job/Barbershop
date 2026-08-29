@@ -15,7 +15,7 @@
     <%= hidden_field_tag :service_id, @service.id %>
     <div>
       <%= label_tag :date, "Дата" %>
-      <%= date_field_tag :date, @date.iso8601, min: Date.current.iso8601, required: true %>
+<%= date_field_tag :date, @date.iso8601, min: Date.current.iso8601, required: true, data: { booking_date: true, service_id: @service.id } %>
       <%= submit_tag "Показать время" %>
     </div>
   <% end %>
@@ -27,7 +27,7 @@
     <div>
       <%= label_tag "booking_starts_at", "Время" %>
       <% if @slots.any? %>
-        <%= select_tag "booking[starts_at]", options_for_select(@slots.map { |slot| [ slot.strftime("%H:%M"), slot.iso8601 ] }, params.dig(:booking, :starts_at)), include_blank: "Выберите время", required: true %>
+<%= select_tag "booking[starts_at]", options_for_select(@slots.map { |slot| [ slot.strftime("%H:%M"), slot.iso8601 ] }, params.dig(:booking, :starts_at)), include_blank: "Выберите время", required: true, data: { booking_slots: true } %>
       <% else %>
         <p>На выбранную дату свободных часов нет.</p>
       <% end %>
