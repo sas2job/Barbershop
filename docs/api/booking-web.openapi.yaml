@@ -9,6 +9,23 @@ info:
 servers:
   - url: /
 paths:
+  /api/v1/availability:
+    get:
+      operationId: listAvailableSlots
+      parameters:
+        - $ref: '#/components/parameters/ServiceId'
+        - $ref: '#/components/parameters/Date'
+      responses:
+        '200':
+          description: Available hourly booking slots.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Availability'
+        '404':
+          description: Service does not exist or is not available for booking.
+        '422':
+          description: Date is not a valid ISO 8601 date.
   /bookings/new:
     get:
       operationId: showBookingForm
@@ -128,6 +145,21 @@ components:
         type: string
         minLength: 32
   schemas:
+    Availability:
+      type: object
+      required: [service_id, date, slots]
+      properties:
+        service_id:
+          type: integer
+          minimum: 1
+        date:
+          type: string
+          format: date
+        slots:
+          type: array
+          items:
+            type: string
+            format: date-time
     BookingForm:
       type: object
       required: [service_id, date, booking]

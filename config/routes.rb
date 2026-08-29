@@ -12,6 +12,11 @@ Rails.application.routes.draw do
     resources :barber_working_hours, only: %i[ index create update destroy ]
     resources :time_offs, only: %i[ index create destroy ]
   end
+  namespace :api do
+    namespace :v1 do
+      get "availability", to: "availability#show"
+    end
+  end
   resources :bookings, only: %i[ new create show ], param: :public_token do
     member do
       post :cancel
