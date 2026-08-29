@@ -22,7 +22,7 @@
 
   <%= form_with model: @booking, url: bookings_path, class: "booking-form" do |form| %>
     <%= hidden_field_tag :service_id, @service.id %>
-    <%= hidden_field_tag :date, @date.iso8601 %>
+<%= hidden_field_tag :date, @date.iso8601, data: { booking_date_value: true } %>
 
     <div>
       <%= label_tag "booking_starts_at", "Время" %>

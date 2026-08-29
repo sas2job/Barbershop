@@ -8,6 +8,9 @@ const refreshSlots = async (dateField, slotsField) => {
   const date = dateField.value;
   if (!date) return;
 
+  const bookingDateValue = document.querySelector("[data-booking-date-value]");
+  if (bookingDateValue) bookingDateValue.value = date;
+
   slotsField.disabled = true;
   try {
     const params = new URLSearchParams({ service_id: dateField.dataset.serviceId, date });

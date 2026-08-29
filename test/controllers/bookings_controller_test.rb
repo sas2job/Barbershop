@@ -19,6 +19,7 @@ class BookingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Запись на услугу"
     assert_select "option", text: @starts_at.strftime("%H:%M")
+    assert_select "input[data-booking-date-value][value=?]", @date.iso8601
   end
 
   test "creates a confirmed booking and redirects to its token page" do
