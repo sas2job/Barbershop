@@ -16,6 +16,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       get "availability", to: "availability#show"
       post "bookings", to: "bookings#create"
+      get "bookings/:public_token", to: "bookings#show", as: :booking
+      delete "bookings/:public_token", to: "bookings#destroy"
+      patch "bookings/:public_token", to: "bookings#update"
     end
   end
   resources :bookings, only: %i[ new create show ], param: :public_token do

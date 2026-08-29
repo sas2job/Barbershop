@@ -2,6 +2,11 @@ module Api
   module V1
     class BookingsController < ApplicationController
       allow_unauthenticated_access
+      before_action :load_booking, only: %i[ show destroy update ]
+
+      def show
+        render_booking
+      end
 
       def create
         service = Service.available_for_booking.find(params[:service_id])
@@ -21,10 +26,42 @@ module Api
         render json: { error: error.record.errors.full_messages.to_sentence }, status: :unprocessable_content
       end
 
+      def destroy
+        @booking.update!(status: :cancelled) if @booking.confirmed?
+        render_booking
+      end
+
+      def update
+        starts_at = parse_start_time
+        validate_start_time!(starts_at)
+        replacement = Appointments::Reschedule.call(booking: @booking, starts_at:)
+
+        render json: booking_json(replacement), status: :created
+      rescue Booking::SlotUnavailable
+        render json: { error: "Это время уже занято" }, status: :unprocessable_content
+      end
+
       private
 
       def booking_params
         params.require(:booking).permit(:client_name, :phone_number)
+      end
+
+      def load_booking
+        @booking = Booking.find_by!(public_token: params[:public_token])
+      end
+
+      def render_booking
+        render json: booking_json(@booking)
+      end
+
+      def booking_json(booking)
+        {
+          public_token: booking.public_token,
+          status: booking.status,
+          service_id: booking.service_id,
+          starts_at: booking.booking_slot.starts_at.iso8601
+        }
       end
 
       def parse_start_time

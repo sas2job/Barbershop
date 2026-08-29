@@ -51,19 +51,7 @@ class BookingsController < ApplicationController
         return render :reschedule, status: :unprocessable_content
       end
 
-      new_booking = Booking.transaction do
-        @booking.lock!
-        raise Booking::SlotUnavailable unless @booking.confirmed?
-
-        replacement = Booking.reserve!(
-          service: @booking.service,
-          starts_at: starts_at,
-          client_name: @booking.client_name,
-          phone_number: @booking.phone_number
-        )
-        @booking.update!(status: :annulled)
-        replacement
-      end
+      new_booking = Appointments::Reschedule.call(booking: @booking, starts_at:)
 
       redirect_to booking_path(new_booking.public_token), notice: "Запись перенесена."
     end

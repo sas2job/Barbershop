@@ -46,6 +46,55 @@ paths:
           description: Service does not exist or is not available for booking.
         '422':
           description: Invalid input or unavailable time slot.
+  /api/v1/bookings/{public_token}:
+    parameters:
+      - $ref: '#/components/parameters/PublicToken'
+    get:
+      operationId: showApiBooking
+      responses:
+        '200':
+          description: Booking details without client contact data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiBooking'
+        '404':
+          description: Token is unknown.
+    delete:
+      operationId: cancelApiBooking
+      responses:
+        '200':
+          description: Booking cancelled without deleting its history.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiBooking'
+        '404':
+          description: Token is unknown.
+    patch:
+      operationId: rescheduleApiBooking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [booking]
+              properties:
+                booking:
+                  type: object
+                  required: [starts_at]
+                  properties:
+                    starts_at:
+                      type: string
+                      format: date-time
+      responses:
+        '201':
+          description: New booking confirmed; old booking is annulled atomically.
+        '404':
+          description: Token is unknown.
+        '422':
+          description: New slot is unavailable; old booking remains confirmed.
   /bookings/new:
     get:
       operationId: showBookingForm
