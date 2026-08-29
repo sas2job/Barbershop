@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get "availability", to: "availability#show"
+      get "services", to: "services#index"
       post "bookings", to: "bookings#create"
       get "bookings/:public_token", to: "bookings#show", as: :booking
       delete "bookings/:public_token", to: "bookings#destroy"

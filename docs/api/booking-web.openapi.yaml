@@ -9,6 +9,31 @@ info:
 servers:
   - url: /
 paths:
+  /api/v1/services:
+    get:
+      operationId: listApiServices
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [women, men]
+      responses:
+        '200':
+          description: Active services, optionally filtered by category.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [services]
+                properties:
+                  services:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ApiService'
+        '422':
+          description: Category is invalid.
   /api/v1/availability:
     get:
       operationId: listAvailableSlots
@@ -214,6 +239,23 @@ components:
         type: string
         minLength: 32
   schemas:
+    ApiService:
+      type: object
+      required: [id, name, category, duration_minutes, price_from_cents, price_to_cents]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+          enum: [women, men]
+        duration_minutes:
+          type: integer
+        price_from_cents:
+          type: integer
+        price_to_cents:
+          type: integer
     Availability:
       type: object
       required: [service_id, date, slots]
