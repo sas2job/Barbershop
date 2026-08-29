@@ -26,6 +26,26 @@ paths:
           description: Service does not exist or is not available for booking.
         '422':
           description: Date is not a valid ISO 8601 date.
+  /api/v1/bookings:
+    post:
+      operationId: createApiBooking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiBookingRequest'
+      responses:
+        '201':
+          description: Booking confirmed immediately.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiBooking'
+        '404':
+          description: Service does not exist or is not available for booking.
+        '422':
+          description: Invalid input or unavailable time slot.
   /bookings/new:
     get:
       operationId: showBookingForm
@@ -160,6 +180,42 @@ components:
           items:
             type: string
             format: date-time
+    ApiBookingRequest:
+      type: object
+      required: [service_id, booking]
+      properties:
+        service_id:
+          type: integer
+          minimum: 1
+        booking:
+          type: object
+          required: [starts_at, client_name, phone_number]
+          properties:
+            starts_at:
+              type: string
+              format: date-time
+            client_name:
+              type: string
+              minLength: 1
+            phone_number:
+              type: string
+              pattern: '^8-[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}$'
+    ApiBooking:
+      type: object
+      required: [public_token, status, service_id, starts_at]
+      properties:
+        public_token:
+          type: string
+          minLength: 32
+        status:
+          type: string
+          enum: [confirmed]
+        service_id:
+          type: integer
+          minimum: 1
+        starts_at:
+          type: string
+          format: date-time
     BookingForm:
       type: object
       required: [service_id, date, booking]
