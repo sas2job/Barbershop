@@ -7,6 +7,12 @@
     <p>Посмотрите доступные услуги и их длительность. Время визита можно будет выбрать на следующем шаге.</p>
   </header>
 
+  <nav class="catalog__filters" aria-label="Фильтр по залу">
+    <%= link_to "Все услуги", root_path, class: ("is-active" unless @category) %>
+    <%= link_to "Женский зал", root_path(category: "women"), class: ("is-active" if @category == "women") %>
+    <%= link_to "Мужской зал", root_path(category: "men"), class: ("is-active" if @category == "men") %>
+  </nav>
+
   <% [["women", "Женский зал"], ["men", "Мужской зал"]].each do |category, title| %>
     <% services = @services_by_category.fetch(category, []) %>
     <% next if services.empty? %>
