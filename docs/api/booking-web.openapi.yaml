@@ -1,0 +1,153 @@
+openapi: 3.1.0
+info:
+  title: Barbershop public booking web contract
+  version: 1.0.0
+  description: >-
+    HTTP contract for the public booking flow. The current client is an HTML
+    form, so successful mutations redirect to an HTML page instead of returning
+    JSON. This contract does not expose sequential database identifiers.
+servers:
+  - url: /
+paths:
+  /bookings/new:
+    get:
+      operationId: showBookingForm
+      parameters:
+        - $ref: '#/components/parameters/ServiceId'
+        - $ref: '#/components/parameters/Date'
+      responses:
+        '200':
+          description: Booking form with currently available slots.
+          content:
+            text/html:
+              schema:
+                type: string
+        '404':
+          description: Service does not exist or is not available for booking.
+  /bookings:
+    post:
+      operationId: createBooking
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BookingForm'
+      responses:
+        '302':
+          description: Booking confirmed; Location contains the public token URL.
+          headers:
+            Location:
+              schema:
+                type: string
+                pattern: '^/bookings/[A-Za-z0-9_-]+$'
+        '422':
+          description: Invalid input or unavailable time slot.
+  /bookings/{public_token}:
+    parameters:
+      - $ref: '#/components/parameters/PublicToken'
+    get:
+      operationId: showBooking
+      responses:
+        '200':
+          description: Booking details page.
+          content:
+            text/html:
+              schema:
+                type: string
+        '404':
+          description: Token is unknown.
+  /bookings/{public_token}/cancel:
+    parameters:
+      - $ref: '#/components/parameters/PublicToken'
+    post:
+      operationId: cancelBooking
+      responses:
+        '302':
+          description: Booking was cancelled; Location contains the same public token URL.
+        '404':
+          description: Token is unknown.
+  /bookings/{public_token}/reschedule:
+    parameters:
+      - $ref: '#/components/parameters/PublicToken'
+    get:
+      operationId: showRescheduleForm
+      responses:
+        '200':
+          description: Rescheduling form.
+          content:
+            text/html:
+              schema:
+                type: string
+        '404':
+          description: Token is unknown.
+    post:
+      operationId: rescheduleBooking
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [date, starts_at]
+              properties:
+                date:
+                  type: string
+                  format: date
+                starts_at:
+                  type: string
+                  format: date-time
+      responses:
+        '302':
+          description: New booking confirmed; old booking is annulled atomically.
+        '422':
+          description: New slot is unavailable; old booking remains confirmed.
+        '404':
+          description: Token is unknown.
+components:
+  parameters:
+    ServiceId:
+      name: service_id
+      in: query
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    Date:
+      name: date
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+    PublicToken:
+      name: public_token
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 32
+  schemas:
+    BookingForm:
+      type: object
+      required: [service_id, date, booking]
+      properties:
+        service_id:
+          type: integer
+          minimum: 1
+        date:
+          type: string
+          format: date
+        booking:
+          type: object
+          required: [starts_at, client_name, phone_number]
+          properties:
+            starts_at:
+              type: string
+              format: date-time
+            client_name:
+              type: string
+              minLength: 1
+            phone_number:
+              type: string
+              pattern: '^8-[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}$'

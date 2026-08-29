@@ -31,7 +31,7 @@ class BookingScheduleTest < ActiveSupport::TestCase
       password_confirmation: "password",
       role: :barber
     )
-    [users(:one), second_barber].each do |barber|
+    [ users(:one), second_barber ].each do |barber|
       BarberWorkingHour.create!(barber:, weekday: 1, opens_at: "09:00", closes_at: "18:00")
     end
 
