@@ -15,16 +15,16 @@
     <div>
       <%= label_tag :date, "Дата" %>
       <%= hidden_field_tag :_method, "get" %>
-      <%= date_field_tag :date, @date.iso8601, min: Date.current.iso8601, required: true %>
+      <%= date_field_tag :date, @date.iso8601, min: Date.current.iso8601, required: true, data: { booking_date: true, service_id: @service.id } %>
       <%= submit_tag "Показать время" %>
     </div>
   <% end %>
 
   <%= form_with url: reschedule_booking_path(@booking.public_token), method: :post, class: "booking-form" do %>
-    <%= hidden_field_tag :date, @date.iso8601 %>
+    <%= hidden_field_tag :date, @date.iso8601, data: { booking_date_value: true } %>
     <div>
       <%= label_tag "booking_starts_at", "Время" %>
-      <%= select_tag "booking[starts_at]", options_for_select(@slots.map { |slot| [ slot.strftime("%H:%M"), slot.iso8601 ] }, params.dig(:booking, :starts_at)), include_blank: "Выберите время", required: true %>
+      <%= select_tag "booking[starts_at]", options_for_select(@slots.map { |slot| [ slot.strftime("%H:%M"), slot.iso8601 ] }, params.dig(:booking, :starts_at)), include_blank: "Выберите время", required: true, data: { booking_slots: true } %>
     </div>
     <%= submit_tag "Подтвердить перенос", disabled: @slots.empty? %>
   <% end %>
